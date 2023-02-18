@@ -1,3 +1,4 @@
+import { Token, TokenTypes } from "./tokenizer";
 export enum NodeTypes {
     NumberLiteral = "NumberLiteral",
     Program = "Program",
@@ -64,4 +65,31 @@ export function createCallExpression(name): CallExpressionNode {
         name,
         params: [],
     };
+}
+function parser(tokens: Token[]) {
+    let current = 0
+    let token = tokens[current];
+    const rootNode = createRootNode()
+    while (current < tokens.length) {
+        if (token.type === TokenTypes.Number) {
+            const numberNode = createNumberLiteralNode(token.value)
+            rootNode.body.push(numberNode)
+        }
+        if (token.type === TokenTypes.Paren && token.value === "(") {
+            token = tokens[++current]
+            const node = createCallExpression(token.value)
+            token = tokens[++current]
+            while (!(token.type === TokenTypes.Paren && token.value === ")")) {
+                if (token.type === TokenTypes.Number) {
+                    const numberNode = createNumberLiteralNode(token.value)
+                    node.params.push(numberNode)
+                    token = tokens[++current]
+                }
+            }
+            current++
+            rootNode.body.push(node)
+        }
+    }
+
+    return rootNode
 }
