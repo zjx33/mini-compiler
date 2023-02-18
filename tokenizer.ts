@@ -1,13 +1,14 @@
 export enum TokenTypes {
     Paren,
     Name,
-    Number
+    Number,
+    String
 }
 export interface Token {
     type: TokenTypes
     value: string
 }
-function tokenizer(code: string) {
+export function tokenizer(code: string) {
     const tokens: Token[] = []
     //指针
     let current = 0
@@ -42,7 +43,7 @@ function tokenizer(code: string) {
             let value = ''
             while (LETTERS.test(char) && current < code.length) {
                 value += char
-                char = code[current++]
+                char = code[++current]
             }
             tokens.push({
                 type: TokenTypes.Name,
@@ -55,7 +56,7 @@ function tokenizer(code: string) {
             let value = ''
             while (NUMBERS.test(char) && current < code.length) {
                 value += char
-                char = code[current++]
+                char = code[++current]
             }
             tokens.push({
                 type: TokenTypes.Number,
